@@ -1,9 +1,36 @@
-const STORAGE_KEY = 'scrollbound-state-v1';
+export const STORAGE_KEY = 'scrollbound-state-v1';
 
-export function readState(fallback) {
-  try { return { ...fallback, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') }; }
-  catch { return { ...fallback }; }
+function getStorage() {
+  try { return typeof localStorage === 'undefined' ? null : localStorage; }
+  catch { return null; }
 }
 
-export function writeState(state) { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-export function clearState() { localStorage.removeItem(STORAGE_KEY); }
+export function loadState() {
+  const storage = getStorage();
+  if (!storage) return null;
+  try {
+    const saved = storage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveState(state) {
+  const storage = getStorage();
+  if (!storage) return false;
+  try { storage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
+  catch { return false; }
+}
+
+export function resetState() {
+  const storage = getStorage();
+  if (!storage) return false;
+  try { storage.removeItem(STORAGE_KEY); return true; }
+  catch { return false; }
+}
+
+// Backward-compatible names for modules that already use the storage layer.
+export const readState = (fallback) => ({ ...fallback, ...(loadState() || {}) });
+export const writeState = saveState;
+export const clearState = resetState;
