@@ -1,0 +1,4 @@
+import { awardProgress } from './progression.js';
+export const enemies = [{ id: 'gloom-sprite', name: 'Gloom Sprite', health: 20, attack: 5, chapter: 1 }, { id: 'ink-wolf', name: 'Ink Wolf', health: 35, attack: 9, chapter: 2 }, { id: 'rune-knight', name: 'Rune Knight', health: 55, attack: 13, chapter: 3 }];
+export function beginBattle(topic) { return { topic, enemy: enemies[0], enemyHealth: enemies[0].health, playerHealth: 100, questionIndex: 0 }; }
+export function resolveAnswer(store, battle, correct) { if (correct) { battle.enemyHealth = Math.max(0, battle.enemyHealth - 10); if (battle.enemyHealth === 0) { awardProgress(store, 40, 20); return { ...battle, won: true }; } } else battle.playerHealth = Math.max(0, battle.playerHealth - battle.enemy.attack); return { ...battle, lost: battle.playerHealth === 0 }; }
