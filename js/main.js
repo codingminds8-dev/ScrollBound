@@ -1,6 +1,6 @@
 import { createStore } from './state.js';
 import { createRouter } from './navigation.js';
-import { bindBattleEvents } from './views.js?v=20261114-5';
+import { bindBattleEvents } from './views.js?v=20261114-6';
 
 const store = createStore();
 const navigate = createRouter(store);

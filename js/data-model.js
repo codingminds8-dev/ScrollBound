@@ -11,9 +11,12 @@ export const DEFAULT_CHAPTERS = [
 ];
 
 export const DEFAULT_ITEMS = [
-  { id: 'ember-blade', name: 'Ember Blade', type: 'weapon', price: 40, attackBonus: 3, icon: '⚔' },
-  { id: 'star-cloak', name: 'Star Cloak', type: 'armor', price: 60, healthBonus: 15, icon: '✦' },
-  { id: 'forest-skin', name: 'Forest Skin', type: 'skin', price: 80, icon: '♞' }
+  { id: 'ember-blade', name: 'Ember Blade', type: 'weapon', slot: 'weapon', rarity: 'orange', price: 40, attackBonus: 3, icon: '⚔' },
+  { id: 'star-cloak', name: 'Star Cloak', type: 'armor', slot: 'chest', rarity: 'blue', price: 60, healthBonus: 15, icon: '✦' },
+  { id: 'forest-skin', name: 'Forest Skin', type: 'skin', slot: 'skin', rarity: 'green', price: 80, xpBonus: 10, icon: '♞' },
+  { id: 'iron-helm', name: 'Iron Helm', type: 'armor', slot: 'helmet', rarity: 'gray', price: 30, defenseBonus: 2, icon: '⛑' },
+  { id: 'moon-charm', name: 'Moon Charm', type: 'accessory', slot: 'accessory', rarity: 'purple', price: 90, xpBonus: 10, icon: '☾' },
+  { id: 'sun-vanity', name: 'Sun Vanity', type: 'skin', slot: 'vanity', rarity: 'orange', price: 120, icon: '☀' }
 ];
 
 export const DEFAULT_TOPIC = {
