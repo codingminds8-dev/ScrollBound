@@ -1,7 +1,7 @@
 export const DEFAULT_ENEMIES = [
-  { id: 'gloom-sprite', name: 'Gloom Sprite', chapter: 1, maxHealth: 20, attackPower: 5, rewardXp: 40, rewardPoints: 20 },
-  { id: 'ink-wolf', name: 'Ink Wolf', chapter: 2, maxHealth: 35, attackPower: 9, rewardXp: 65, rewardPoints: 35 },
-  { id: 'rune-knight', name: 'Rune Knight', chapter: 3, maxHealth: 55, attackPower: 13, rewardXp: 100, rewardPoints: 55 }
+  { id: 'gloom-sprite', name: 'Gloom Sprite', chapter: 1, biome: 'forest', sprite: '☄', maxHealth: 20, attackPower: 5, difficulty: 1, rewardXp: 40, rewardPoints: 20, rewardValue: '40 XP · 20 pts' },
+  { id: 'ink-wolf', name: 'Ink Wolf', chapter: 2, biome: 'cave', sprite: '🐺', maxHealth: 35, attackPower: 9, difficulty: 2, rewardXp: 65, rewardPoints: 35, rewardValue: '65 XP · 35 pts' },
+  { id: 'rune-knight', name: 'Rune Knight', chapter: 3, biome: 'castle', sprite: '♞', maxHealth: 55, attackPower: 13, difficulty: 3, rewardXp: 100, rewardPoints: 55, rewardValue: '100 XP · 55 pts' }
 ];
 
 export const DEFAULT_CHAPTERS = [
@@ -49,7 +49,7 @@ export function normalizeState(saved) {
     version: 1,
     player: { ...defaults.player, ...player, level: numberOr(player.level, defaults.player.level, 1), experience: numberOr(player.experience ?? player.xp, defaults.player.experience), points: numberOr(player.points, defaults.player.points), maxHealth: numberOr(player.maxHealth, defaults.player.maxHealth, 1), health: numberOr(player.health, defaults.player.health), attackPower: numberOr(player.attackPower, defaults.player.attackPower) },
     topics: arrayOr(source.topics, defaults.topics).filter(Boolean).map((topic) => ({ ...topic, id: topic.id || `topic-${Date.now()}`, title: topic.title || 'Untitled topic', description: topic.description || '', questions: arrayOr(topic.questions, []).filter(Boolean).map((question) => ({ ...question, id: question.id || `question-${Date.now()}`, prompt: question.prompt || '', answers: arrayOr(question.answers, []), correctIndex: numberOr(question.correctIndex, 0) })) })),
-    story: { ...defaults.story, ...story, currentChapter: numberOr(story.currentChapter, defaults.story.currentChapter, 1), unlockedChapter: numberOr(story.unlockedChapter, defaults.story.unlockedChapter, 1), defeatedEnemies: arrayOr(story.defeatedEnemies, []), chapters: arrayOr(story.chapters, defaults.story.chapters), enemies: arrayOr(story.enemies, defaults.story.enemies) },
+    story: { ...defaults.story, ...story, currentChapter: numberOr(story.currentChapter, defaults.story.currentChapter, 1), unlockedChapter: numberOr(story.unlockedChapter, defaults.story.unlockedChapter, 1), defeatedEnemies: arrayOr(story.defeatedEnemies, []), chapters: arrayOr(story.chapters, defaults.story.chapters), enemies: arrayOr(story.enemies, defaults.story.enemies).map((enemy, index) => ({ ...defaults.story.enemies[index] || {}, ...enemy, difficulty: numberOr(enemy.difficulty, index + 1, 1), rewardValue: enemy.rewardValue || `${enemy.rewardXp || 0} XP · ${enemy.rewardPoints || 0} pts` })) },
     inventory: { ...defaults.inventory, ...inventory, ownedItemIds: arrayOr(inventory.ownedItemIds ?? inventory.owned, []), equipped: { ...defaults.inventory.equipped, ...(inventory.equipped || {}) }, items: arrayOr(inventory.items, defaults.inventory.items) },
     settings: { ...defaults.settings, ...settings },
     lastView: typeof source.lastView === 'string' ? source.lastView : defaults.lastView
