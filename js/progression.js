@@ -1,5 +1,7 @@
-const XP_PER_LEVEL = 100;
-export function awardProgress(store, xp, points) {
-  store.update((state) => { const totalXp = state.player.experience + xp; const level = Math.floor(totalXp / XP_PER_LEVEL) + 1; return { ...state, player: { ...state.player, experience: totalXp, level, points: state.player.points + points } }; });
-}
-export function xpToNextLevel(player) { return XP_PER_LEVEL - (player.experience % XP_PER_LEVEL); }
+const BASE_XP = 100;
+const LEVEL_XP_STEP = 25;
+export function xpForLevel(level) { return BASE_XP + Math.max(0, level - 1) * LEVEL_XP_STEP; }
+export function levelFromXp(totalXp) { let level = 1; let remaining = Math.max(0, totalXp); while (remaining >= xpForLevel(level)) { remaining -= xpForLevel(level); level += 1; } return level; }
+export function xpToNextLevel(player) { let level = 1; let remaining = Math.max(0, player.experience || 0); while (remaining >= xpForLevel(level)) { remaining -= xpForLevel(level); level += 1; } return xpForLevel(level) - remaining; }
+export function awardProgress(store, xp, points) { const before = store.get().player; const totalXp = before.experience + Math.max(0, xp); const nextLevel = levelFromXp(totalXp); const levelsGained = Math.max(0, nextLevel - before.level); store.update((state) => ({ ...state, player: { ...state.player, experience: totalXp, level: nextLevel, points: state.player.points + Math.max(0, points), maxHealth: state.player.maxHealth + levelsGained * 20, health: Math.min(state.player.maxHealth + levelsGained * 20, state.player.health + levelsGained * 20), attackPower: state.player.attackPower + levelsGained * 2 } })); return { previousLevel: before.level, level: nextLevel, levelsGained, leveledUp: levelsGained > 0 }; }
+export function recordStudySession(store) { const today = new Date().toISOString().slice(0, 10); const current = store.get().progress || {}; if (current.lastStudyDate === today) return current.streak || 0; const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); const streak = current.lastStudyDate === yesterday.toISOString().slice(0, 10) ? (current.streak || 0) + 1 : 1; store.update((state) => ({ ...state, progress: { ...state.progress, streak, bestStreak: Math.max(state.progress.bestStreak || 0, streak), lastStudyDate: today } })); return streak; }

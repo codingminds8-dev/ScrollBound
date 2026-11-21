@@ -31,6 +31,7 @@ export function createDefaultState() {
     topics: [structuredCloneSafe(DEFAULT_TOPIC)],
     story: { currentChapter: 1, unlockedChapter: 1, defeatedEnemies: [], chapters: structuredCloneSafe(DEFAULT_CHAPTERS), enemies: structuredCloneSafe(DEFAULT_ENEMIES) },
     inventory: { ownedItemIds: [], equipped: { weapon: null, armor: null, skin: null }, items: structuredCloneSafe(DEFAULT_ITEMS) },
+    progress: { streak: 0, bestStreak: 0, lastStudyDate: null },
     settings: { soundEnabled: true, reducedMotion: false, onboardingComplete: false },
     lastView: 'home'
   };
@@ -48,12 +49,14 @@ export function normalizeState(saved) {
   const story = source.story && typeof source.story === 'object' ? source.story : {};
   const inventory = source.inventory && typeof source.inventory === 'object' ? source.inventory : {};
   const settings = source.settings && typeof source.settings === 'object' ? source.settings : {};
+  const progress = source.progress && typeof source.progress === 'object' ? source.progress : {};
   return {
     version: 1,
     player: { ...defaults.player, ...player, level: numberOr(player.level, defaults.player.level, 1), experience: numberOr(player.experience ?? player.xp, defaults.player.experience), points: numberOr(player.points, defaults.player.points), maxHealth: numberOr(player.maxHealth, defaults.player.maxHealth, 1), health: numberOr(player.health, defaults.player.health), attackPower: numberOr(player.attackPower, defaults.player.attackPower) },
     topics: arrayOr(source.topics, defaults.topics).filter(Boolean).map((topic) => ({ ...topic, id: topic.id || `topic-${Date.now()}`, title: topic.title || 'Untitled topic', description: topic.description || '', questions: arrayOr(topic.questions, []).filter(Boolean).map((question) => ({ ...question, id: question.id || `question-${Date.now()}`, prompt: question.prompt || '', answers: arrayOr(question.answers, []), correctIndex: numberOr(question.correctIndex, 0) })) })),
     story: { ...defaults.story, ...story, currentChapter: numberOr(story.currentChapter, defaults.story.currentChapter, 1), unlockedChapter: numberOr(story.unlockedChapter, defaults.story.unlockedChapter, 1), defeatedEnemies: arrayOr(story.defeatedEnemies, []), chapters: arrayOr(story.chapters, defaults.story.chapters), enemies: arrayOr(story.enemies, defaults.story.enemies).map((enemy, index) => ({ ...defaults.story.enemies[index] || {}, ...enemy, difficulty: numberOr(enemy.difficulty, index + 1, 1), rewardValue: enemy.rewardValue || `${enemy.rewardXp || 0} XP · ${enemy.rewardPoints || 0} pts` })) },
     inventory: { ...defaults.inventory, ...inventory, ownedItemIds: arrayOr(inventory.ownedItemIds ?? inventory.owned, []), equipped: { ...defaults.inventory.equipped, ...(inventory.equipped || {}) }, items: arrayOr(inventory.items, defaults.inventory.items) },
+    progress: { ...defaults.progress, ...progress, streak: numberOr(progress.streak, 0), bestStreak: numberOr(progress.bestStreak, 0), lastStudyDate: typeof progress.lastStudyDate === 'string' ? progress.lastStudyDate : null },
     settings: { ...defaults.settings, ...settings },
     lastView: typeof source.lastView === 'string' ? source.lastView : defaults.lastView
   };
