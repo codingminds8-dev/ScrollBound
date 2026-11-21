@@ -32,7 +32,7 @@ export function createDefaultState() {
     story: { currentChapter: 1, unlockedChapter: 1, defeatedEnemies: [], chapters: structuredCloneSafe(DEFAULT_CHAPTERS), enemies: structuredCloneSafe(DEFAULT_ENEMIES) },
     inventory: { ownedItemIds: [], equipped: { weapon: null, armor: null, skin: null }, items: structuredCloneSafe(DEFAULT_ITEMS) },
     progress: { streak: 0, bestStreak: 0, lastStudyDate: null },
-    settings: { soundEnabled: true, reducedMotion: false, onboardingComplete: false },
+    settings: { soundEnabled: true, reducedMotion: false, cleanFont: false, onboardingComplete: false },
     lastView: 'home'
   };
 }
