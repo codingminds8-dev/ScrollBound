@@ -1,0 +1,242 @@
+Current: Phase 3 Prompt 4
+
+Global UI direction (applies to every prompt below)
+Scrollbound's UI should feel like a 2D pixel sandbox RPG in the style of Terraria: every element on screen, including panels, buttons, text, icons, bars, cursors, tooltips and effects, is built from crisp, chunky pixels. Keep Scrollbound's own identity (parchment, gold accents, dark medieval atmosphere, existing logo) and apply it through Terraria-like pixel construction. Use only original assets. Do not copy Terraria sprites, fonts, logos or UI images.
+
+Pixel UI rules:
+- One base pixel unit (e.g. --px: 3px or 4px). All sizes, borders, padding, gaps and offsets are whole multiples of it. Scale sprites only by integers (2x, 3x, 4x).
+- image-rendering: pixelated (plus crisp-edges fallback) on every image, sprite and canvas.
+- No border-radius, no blurred box-shadows, no smooth gradients, no glassmorphism. Use hard 1-unit drop shadows and stepped, banded colors only.
+- Panels: 9-slice pixel frames using border-image (dark outline, inner highlight and shadow bevel), with a semi-opaque, dark-tinted parchment fill so the world scene shows through faintly, like Terraria's inventory panels.
+- Typography: a self-hosted, open-licensed bitmap or pixel font (e.g. Pixelify Sans, Press Start 2P or VT323, bundled locally) at integer sizes only, with a hard 1-unit text outline or shadow for readability over scenes. Turn off font smoothing where supported.
+- Item slots: square, beveled pixel slots used for inventory, hotbar, shop, equipment and rewards. Hovered and selected slots get a bright gold pixel border.
+- Tooltips: pixel-framed boxes that follow the cursor. Item names are colored by rarity tier (e.g. gray, white, green, blue, purple, orange), and stats appear below in a smaller line.
+- Health shown as a row of pixel hearts (plus an optional numeric value). Optional mana or focus shown as pixel stars. Enemy and boss health shown as segmented pixel bars.
+- Floating combat text: pixel-font damage and heal numbers that pop up, drift and fade using steps() timing.
+- Animations use steps() / sprite-sheet frame timing, not smooth easing, except for subtle UI fades.
+- A custom pixel cursor (with the default cursor kept as a fallback and for accessibility).
+- A bottom-left pixel event log ("You gained 25 XP", "Item purchased") in the style of Terraria's chat log.
+- Backgrounds: layered pixel parallax scenes (sky, distant hills, castle or forest silhouettes, foreground tiles) built from CSS and existing image assets.
+- Pixel art must still meet accessibility needs: readable sizes, sufficient contrast, keyboard focus as a visible pixel outline, and no meaning conveyed by color alone.
+
+Phase 1 — Foundation
+Prompt 1 — Establish the app structure
+Inspect the existing Scrollbound homepage and preserve its current visual identity: pixel-art fantasy, parchment, gold accents, dark medieval atmosphere, and the existing logo.
+Refactor the project into a maintainable front-end structure using only HTML, CSS, and vanilla JavaScript. Create separate modules for:
+- Application state
+- Navigation/views
+- Topics and questions
+- Story battles
+- Player progression
+- Inventory and rewards
+- Local storage persistence
+- Pixel UI kit (shared CSS tokens and reusable components; see Prompt 2B)
+Keep the existing homepage as the landing page. Add a basic app shell that can switch between Home, Study, Story, Inventory, and Create Topic views without reloading the page. The shell should feel like a game screen: a full-viewport pixel scene with a framed HUD (hearts and level at top-left, points at top-right, a slot hotbar along the top or bottom) rather than a web page with a navbar.
+
+Prompt 2 — Create the data model and persistence layer
+Build the initial Scrollbound data model in vanilla JavaScript.
+Include:
+- Player profile
+- Level and experience
+- Points
+- Health and attack power
+- Topics
+- Questions and answers
+- Story chapters
+- Enemies
+- Inventory items (each with a sprite reference, slot type, and rarity tier for tooltip coloring)
+- Equipped items
+- UI settings (pixel scale 2x/3x/4x, custom cursor on/off, reduced motion)
+Store player progress, created topics, created questions, inventory, and settings in localStorage. Add helper functions for loading, saving, resetting, and safely handling missing data.
+Do not build the UI yet. Make the data model easy for the rest of the application to consume.
+
+Prompt 2B — Pixel UI kit (NEW: run before continuing Phase 2)
+Build a shared, Terraria-style pixel UI kit for Scrollbound using only HTML, CSS, and vanilla JavaScript. Every later prompt must use this kit instead of creating its own styles.
+Create:
+- CSS design tokens: the --px base unit, an integer spacing scale, a limited banded palette (parchment, dark wood, gold, ink, health red, mana blue, plus rarity colors), and pixel font sizes.
+- Pixel panel (9-slice border-image frame, semi-opaque fill, optional title tab)
+- Pixel button (default, hover, pressed and disabled states shown with a 1-unit offset and bevel swap, and a visible pixel focus ring)
+- Item slot and slot grid (hotbar, inventory grid, equipment column)
+- Cursor-following tooltip with rarity-colored item names
+- Pixel heart row, star row, and segmented health/XP bars
+- Pixel text input, textarea, checkbox and radio (for Create Topic and settings)
+- Pixel modal / dialog box with an optional NPC portrait slot
+- Floating combat text and the bottom-left event log
+- Parallax scene container with layer slots
+- A pixel-scale setting that rescales the whole UI by an integer factor
+Include a hidden kit preview view (e.g. #ui-kit) that shows every component, for review.
+If Prompt 3A has already been built, retrofit its screens to use the kit.
+
+Phase 2 — Core Features
+The following prompts can be run concurrently if each task works in separate JavaScript/CSS modules or separate branches/worktrees. All of them must use the Prompt 2B pixel UI kit and follow the global UI direction.
+Prompt 3A — Topic and question creation
+Build the Create Topic feature for Scrollbound.
+Users should be able to:
+- Create a topic
+- Add a topic description
+- Add multiple example questions
+- Add multiple-choice answers
+- Mark the correct answer
+- Edit and delete their questions
+- Save the topic to localStorage
+Award points when a user creates a valid topic or question. Add validation for empty fields, duplicate questions, and missing correct answers.
+Present this as an in-game crafting or scribe's table: a pixel panel with pixel inputs, each question shown as a "scroll" item in a slot list, the correct answer marked with a pixel checkmark (not color alone), and validation errors shown as pixel-framed messages next to the field. Reward points with floating pixel text and an event-log entry.
+
+Prompt 3B — Study and battle system
+Build the core Study Battle feature.
+The player should:
+- Select a study topic
+- Encounter an enemy
+- Receive one question at a time
+- Select an answer
+- See whether the answer was correct
+- Deal damage for correct answers
+- Take damage for incorrect answers
+- Defeat the enemy after enough correct answers
+- Earn experience and points after winning
+- Receive a game-over state if health reaches zero
+Use the existing topic and question data model. Create reusable battle UI components and keep all battle state in JavaScript.
+Battle presentation (Terraria-style):
+- Side-view pixel arena: player sprite on the left, enemy sprite on the right, standing on a row of pixel ground tiles over a parallax background.
+- Player health as pixel hearts in the top-left HUD. Enemy health as a segmented pixel bar with the enemy's name above it (a large boss-style bar at bottom-center for chapter bosses).
+- Topic selection shown as a grid of item-slot style "tomes" with tooltips showing the topic name and question count.
+- Question shown in a pixel dialog panel. Answers shown as pixel buttons labeled 1–4, selectable with mouse or number keys.
+- Correct answers trigger a pixel attack swing, an enemy hit-flash, and floating damage numbers. Incorrect answers trigger an enemy attack, screen shake, a red player hit-flash, and a lost heart. The result is also shown in text ("Correct!" / "Wrong — the answer was B") so it doesn't rely on color.
+- Victory: pixel loot drops (XP orbs and coin sprites) that fly to the HUD, plus a reward panel with item slots. Defeat: a dark overlay with a pixel "You were slain…" message and Retry / Return buttons.
+- Log every battle event to the bottom-left event log.
+
+Prompt 3C — Story mode and increasing difficulty
+Build the Scrollbound Story mode.
+Create a series of chapters with increasingly difficult enemies. Each enemy should have:
+- Name
+- Pixel-art sprite (sprite sheet or CSS box-shadow pixel art) with idle and hit frames
+- Maximum health
+- Attack damage
+- Difficulty rating (shown as pixel skull icons)
+- Reward value
+Unlock the next enemy only after defeating the current one. Save story progress to localStorage.
+Add a story map or chapter-selection screen styled like a pixel world map: a tile-based overworld (grass, forest, desert, cave and castle biomes) with chapter nodes connected by a dotted pixel path. Locked nodes show a pixel padlock and a "Locked" label, and the current node pulses with a stepped animation. Hovering or focusing a node shows a pixel tooltip with the enemy, difficulty, and rewards.
+
+Prompt 3D — Inventory, shop, and customization
+Build the Inventory and Shop system.
+Include:
+- A shop displaying equipment, clothes, and character skins
+- Item prices in points
+- Purchase buttons
+- Locked/unlocked states
+- Equipped item state
+- A basic player preview
+- Saving purchases and equipped items to localStorage
+Items should affect the player visually and may optionally provide simple bonuses such as health, attack, or experience gain.
+Layout (Terraria-style):
+- Inventory: a pixel slot grid with a 10-slot hotbar row, plus an equipment column (helmet, chest, legs, weapon, accessory, vanity/skin slots) next to a pixel player preview that updates as items are equipped.
+- Item tooltips show the rarity-colored name, slot type, stat bonuses ("+2 defense", "+10% XP"), and price.
+- Shop: an original merchant NPC with a pixel portrait in a dialog box ("Buy" / "Close"), opening a shop slot grid with coin-icon prices. Unaffordable items are dimmed and also labeled ("Not enough points"); locked items show a padlock.
+- Purchases trigger a coin sound-ready hook, floating "-120" pixel text, and an event-log entry.
+
+Prompt 3E — Pixel-art game visuals
+Expand the Prompt 2B kit with game-world visuals using CSS, HTML, and existing image assets only.
+Create reusable visual components for:
+- Player character (layered sprite: base skin + armor + weapon, so equipment visibly changes it)
+- Enemies (idle, hit, and defeat frames)
+- Weapons
+- Armor
+- Potions
+- Medieval environments (tile rows and multi-layer parallax backgrounds per biome)
+- Battle effects
+- Victory and defeat states
+Use pixelated styling, integer scaling, image-rendering optimizations, steps()-based sprite animations, glowing pixel runes (banded glow, not blur), hit flashes, floating damage numbers, and simple pixel-square particle effects (dust, sparks, coin bursts). Respect the reduced-motion setting.
+Do not introduce a framework or external game engine.
+
+Phase 3 — Integration
+Prompt 4 — Connect all features into the app
+Integrate the topic creator, study battles, story mode, inventory, shop, player progression, and homepage.
+Add navigation between:
+- Home
+- Dashboard
+- Study Topics
+- Story Mode
+- Inventory
+- Shop
+- Create Topic
+Navigation should look like an in-game menu: icon slot buttons in a pixel hotbar or a framed side menu, each with a text label and tooltip, plus Esc to open a pixel pause/settings menu.
+Make sure all views use the shared localStorage state and the shared pixel UI kit. Add empty states when the user has no topics or inventory items (e.g. an empty slot grid with a pixel message: "Your satchel is empty — visit the merchant").
+Preserve the existing Scrollbound homepage and ensure the "Begin your quest" button leads into the application dashboard or topic-selection screen. Restyle the homepage only as needed to match the pixel UI (pixel buttons and panels), keeping the logo and atmosphere.
+
+Prompt 5 — Add progression and reward balancing
+Add a balanced progression system to Scrollbound.
+Include:
+- Experience requirements per level
+- Level-up notifications (a pixel banner with a rising-particle burst and a "Level up!" event-log entry)
+- Increased player stats after leveling (extra hearts appear in the HUD)
+- Point rewards for correct answers
+- Point rewards for creating topics and questions
+- Increasing enemy difficulty
+- Shop prices that scale appropriately
+- Daily or session-based study streak tracking (shown as a pixel flame or candle icon with a counter)
+Make sure rewards feel motivating without making progression too easy. Display clear feedback after every answer, battle, level-up, purchase, and topic creation, using floating pixel text, the event log, and pixel panels.
+
+Phase 4 — Polish and Quality
+Prompt 6 — Improve usability and accessibility
+Audit the full Scrollbound application for usability and accessibility.
+Improve:
+- Keyboard navigation (including number-key answers, Esc for menus, and arrow keys in slot grids)
+- Focus states (thick pixel outlines that stay visible on every background)
+- Button labels
+- Modal behavior
+- Color contrast (check pixel text over parallax scenes; add outlines or panel backing where needed)
+- Error messages
+- Responsive layouts (snap the UI to integer pixel scales per breakpoint rather than fluid fractional sizing)
+- Mobile usability (touch-sized slots and buttons, tap-to-show tooltips instead of hover)
+- Screen-reader labels (hearts, bars and slots need text equivalents)
+- Clear navigation between screens
+- A minimum readable pixel-font size, plus an option to switch to a clean fallback font
+Ensure no important action depends only on color, animation, or hover behavior.
+
+Prompt 7 — Add onboarding
+Create a short first-time onboarding flow for Scrollbound, delivered by an original guide NPC in pixel dialog boxes that point at real UI elements with a bouncing pixel arrow.
+Explain:
+1. Choose or create a study topic
+2. Answer questions to battle enemies
+3. Earn experience and points
+4. Unlock stronger enemies
+5. Purchase equipment and skins
+Show onboarding only for new users and store completion in localStorage. Allow the user to replay it from settings.
+
+Prompt 8 — Test and fix the application
+Perform a complete functional test of the Scrollbound application.
+Test:
+- Creating topics
+- Creating questions
+- Selecting correct and incorrect answers
+- Winning and losing battles
+- Leveling up
+- Earning points
+- Purchasing items
+- Equipping items (and that the player sprite updates)
+- Unlocking story chapters
+- Reloading the page
+- Clearing localStorage
+- Mobile layout
+- Modal and keyboard behavior
+- Pixel fidelity: no blurry sprites, no fractional scaling, no rounded corners or soft shadows, correct rendering at every UI scale setting
+Fix all discovered bugs. Check the browser console for errors and remove unused code.
+
+Recommended concurrency plan
+Run first (sequential):
+- Prompt 1, Prompt 2 (done)
+- Prompt 2B: Pixel UI kit (new; required before the rest of Phase 2)
+Safe to run concurrently after the pixel UI kit:
+- Prompt 3A: Topic and question creation (retrofit to the kit if already built)
+- Prompt 3B: Study battle system
+- Prompt 3C: Story mode
+- Prompt 3D: Inventory and shop
+- Prompt 3E: Pixel-art visuals
+These should be developed in separate modules or branches to avoid file conflicts. Only Prompt 2B (or a single owner) should edit the shared UI kit files. Feature prompts add their own view-specific CSS files.
+Run these sequentially afterward:
+1. Prompt 4 — Integration
+2. Prompt 5 — Progression balancing
+3. Prompt 6 — Accessibility and responsive polish
+4. Prompt 7 — Onboarding
+5. Prompt 8 — Testing and bug fixes
+The most important dependencies are that Prompts 3A–3D use the shared data model from Prompt 2 and the shared pixel UI kit from Prompt 2B.
